@@ -1,0 +1,22 @@
+{
+    "Setting": true,
+    "Material": true,
+    "Purchase": true,
+    "Stock": true,
+    "Supplier": true,
+    "Customer": true,
+    "Account": true,
+    "Bank": true,
+    "MobileBank": true,
+    "Product": true,
+    "Sale": true,
+    "Expense": true,
+    "Report": true,
+    "HRM": true,
+    "StockLedger": true,
+    "Formulation": true,
+    "Production": true,
+    "StockReturn": true,
+    "Transfer": true,
+    "DamageMaterial": true
+}

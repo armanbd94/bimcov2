@@ -1,0 +1,13 @@
+{
+    "name": "Formulation",
+    "alias": "formulation",
+    "description": "",
+    "keywords": [],
+    "priority": 0,
+    "providers": [
+        "Modules\\Formulation\\Providers\\FormulationServiceProvider"
+    ],
+    "aliases": {},
+    "files": [],
+    "requires": []
+}
