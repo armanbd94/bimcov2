@@ -146,6 +146,7 @@
 <script src="js/daterangepicker.min.js"></script>
 <script>
     $('.daterangepicker-filed').daterangepicker({
+        timeZone: 'Asia/Dhaka',
         callback: function(startDate, endDate, period){
             var start_date = startDate.format('YYYY-MM-DD');
             var end_date   = endDate.format('YYYY-MM-DD');

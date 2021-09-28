@@ -129,19 +129,21 @@ class PurchaseReturnController extends BaseController
                                     $qty = $value['return_qty'] / $unit->operation_value;
                                 }
                                 $material = Material::find($value['id']);
+                                $cusrrent_stock_value = $material->qty * $material->cost;
 
+                                
                                 $purchase_material = DB::table('purchase_materials as pm')
                                 ->join('purchases as p','pm.purchase_id','=','p.id')
                                 ->join('materials as m','pm.material_id','=','m.id')
                                 ->join('units as u','pm.purchase_unit_id','=','u.id')
                                 ->select('pm.*','p.invoice_no','m.tax_method','u.operator','u.operation_value')
-                                ->where('p.invoice_no',$request->invoice_no)
+                                ->where([['p.invoice_no',$request->invoice_no],['pm.material_id',$value['id']]])
                                 ->first();
 
                                 if($purchase_material->operator == '*'){
-                                    $purchase_qty = $purchase_material->received * $purchase_material->operation_value;
+                                    $return_qty = $value['return_qty'] * $purchase_material->operation_value;
                                 }else{
-                                    $purchase_qty = $purchase_material->received / $purchase_material->operation_value;
+                                    $return_qty = $value['return_qty'] / $purchase_material->operation_value;
                                 }
 
                                 if($purchase_material->tax_method == 1){
@@ -159,33 +161,50 @@ class PurchaseReturnController extends BaseController
                                     }
                                 }
 
-                                if($purchase_material->operator == '*'){
-                                    $after_return_qty = ($purchase_material->received - $value['return_qty']) * $purchase_material->operation_value;
-                                }else{
-                                    $after_return_qty = ($purchase_material->received - $value['return_qty']) / $purchase_material->operation_value;
-                                }
+                                $return_stock_value = $return_qty * $purchase_material_cost;
+
+                                $after_return_stock_qty = $material->qty - $return_qty;
+
+                                $after_return_stock_value = $cusrrent_stock_value - $return_stock_value;
+
+                                $after_return_material_cost = $after_return_stock_value / $after_return_stock_qty;
+
+                                // if($purchase_material->operator == '*'){
+                                //     $purchase_qty = $purchase_material->received * $purchase_material->operation_value;
+                                // }else{
+                                //     $purchase_qty = $purchase_material->received / $purchase_material->operation_value;
+                                // }
+
+                                
+
+                                // if($purchase_material->operator == '*'){
+                                //     $after_return_qty = ($purchase_material->received - $value['return_qty']) * $purchase_material->operation_value;
+                                // }else{
+                                //     $after_return_qty = ($purchase_material->received - $value['return_qty']) / $purchase_material->operation_value;
+                                // }
 
 
-                                $before_purchase_stock_qty = $material->qty - $purchase_qty;
-                                $before_purchase_stock_value = $before_purchase_stock_qty * $material->old_cost;
+                                // $before_purchase_stock_qty = $material->qty - $purchase_qty;
+                                // $before_purchase_stock_value = $before_purchase_stock_qty * $material->old_cost;
 
-                                $after_return_purchase_stock_value = $after_return_qty * $purchase_material_cost;
+                                // $after_return_purchase_stock_value = $after_return_qty * $purchase_material_cost;
 
-                                $after_return_total_qty = $after_return_qty + $before_purchase_stock_qty;
-                                $after_return_material_cost = ($before_purchase_stock_value+$after_return_purchase_stock_value) / $after_return_total_qty;
+                                // $after_return_total_qty = $after_return_qty + $before_purchase_stock_qty;
+                                // $after_return_material_cost = ($before_purchase_stock_value+$after_return_purchase_stock_value) / $after_return_total_qty;
                                 
                                 // $after_purchase_unit_cost = $material->cost;
                                 // $test = [
-                                //     'before_purchase_stock_qty'         => $before_purchase_stock_qty,
-                                //     'before_purchase_stock_value'       => $before_purchase_stock_value,
-                                //     'purchase_qty'                      => $purchase_qty,
-                                //     'purchase_material_cost'            => $purchase_material_cost,
-                                //     'after_return_qty'                  => $after_return_qty,
-                                //     'after_return_total_qty'            => $after_return_total_qty,
-                                //     'after_return_purchase_stock_value' => $after_return_purchase_stock_value,
-                                //     'material_old_cost'                 => $material->old_cost,
-                                //     'material_current_cost'             => $material->cost,
-                                //     'after_return_material_cost'        => $after_return_material_cost,
+                                //     'current_stock_qty' => $material->qty,
+                                //     'current_material_cost' => $material->cost,
+                                //     'current_stock_value' => $material->qty * $material->cost,
+
+                                //     'return_stock_qty' => $return_qty,
+                                //     'return_material_cost' => $purchase_material_cost,
+                                //     'return_stock_value' => $return_stock_value,
+
+                                //     'after_return_stock_qty' => $after_return_stock_qty,
+                                //     'after_return_stock_value' => $after_return_stock_value,
+                                //     'after_return_material_cost' => $after_return_material_cost
                                 // ];
                                 // dd($test);
                                 $materials[] = [

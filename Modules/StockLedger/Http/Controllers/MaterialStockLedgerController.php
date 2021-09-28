@@ -53,10 +53,11 @@ class MaterialStockLedgerController extends BaseController
                     $after_stock_out_current_qty = $previous_data['qty'] - ($production_data['qty']['production_material_qty'] + $production_data['qty']['returned_material_qty'] + $production_data['qty']['damage_material_qty']);
                     $after_stock_out_current_cost = $previous_data['qty'] * $previous_data['cost'];
                     $current_qty = $after_stock_out_current_qty + $purchase_data['qty'];
-                    // if($date->format('Y-m-d') == '2021-09-21'){
-                    //     echo 'Pre Cost ='.$previous_data['cost'].'<br>'.$after_stock_out_current_qty.'<br>'.$after_stock_out_current_cost.'<br>';
-                    //     echo 'Purchase ='.$purchase_data['value'].'<br>'.$current_qty;
-                    //     exit;
+                    // if($date->format('Y-m-d') == '2021-09-24'){
+                        // echo 'Pre Cost ='.$previous_data['cost'].'<br>'.$after_stock_out_current_qty.'<br>'.$after_stock_out_current_cost.'<br>';
+                        // echo 'Purchase ='.$purchase_data['value'].'<br>'.$current_qty;
+                        // exit;
+                        // dd($previous_data);
                     // }
                     if($production_data['after_return_cost'] > 0)
                     {
@@ -189,6 +190,7 @@ class MaterialStockLedgerController extends BaseController
             }
         }
         
+       
 
         //Production calculation
         $productionMaterial = DB::table('production_materials as pm')
@@ -207,6 +209,8 @@ class MaterialStockLedgerController extends BaseController
                 $total_production_material_value += ($material->rate * $material->qty);
             }
         }
+
+        
 
         //Purchase Return Calculation
         $purchaseReturnMaterial = DB::table('purchase_return_materials as pm')
@@ -243,73 +247,24 @@ class MaterialStockLedgerController extends BaseController
             }
         }
 
-        // $onDatePurchaseMaterial = DB::table('purchase_materials as pm')
-        //     ->selectRaw('pm.*,m.tax_method,p.shipping_cost,u.operator,u.operation_value,p.invoice_no')
-        //     ->join('materials as m', 'pm.material_id', '=', 'm.id')
-        //     ->join('purchases as p', 'pm.purchase_id', '=', 'p.id')
-        //     ->join('units as u', 'pm.purchase_unit_id', '=', 'u.id')
-        //     ->where('pm.material_id', $id)
-        //     ->whereDate('p.purchase_date',  $on_Date)
-        //     ->first();
-        
-        // $total_on_date_purchased_cost =  $total_on_date_purchased_qty = $total_on_date_purchased_value = 0;
-        // if ($onDatePurchaseMaterial) {
-        //         if ($onDatePurchaseMaterial->tax_method == 1) {
-        //             if ($onDatePurchaseMaterial->operator == '*') {
-        //                 $onDate_material_purchased_cost = ($onDatePurchaseMaterial->net_unit_cost + ($onDatePurchaseMaterial->discount / $onDatePurchaseMaterial->qty)) / $onDatePurchaseMaterial->operation_value;
-        //             } elseif ($onDatePurchaseMaterial->operator == '/') {
-        //                 $onDate_material_purchased_cost = ($onDatePurchaseMaterial->net_unit_cost + ($onDatePurchaseMaterial->discount / $onDatePurchaseMaterial->qty)) * $onDatePurchaseMaterial->operation_value;
-        //             }
-        //         } else {
-        //             if ($onDatePurchaseMaterial->operator == '*') {
-        //                 $onDate_material_purchased_cost = (($onDatePurchaseMaterial->total + ($onDatePurchaseMaterial->discount / $onDatePurchaseMaterial->qty)) / $onDatePurchaseMaterial->qty) / $onDatePurchaseMaterial->operation_value;
-        //             } elseif ($onDatePurchaseMaterial->operator == '/') {
-        //                 $onDate_material_purchased_cost = (($onDatePurchaseMaterial->total + ($onDatePurchaseMaterial->discount / $onDatePurchaseMaterial->qty)) / $onDatePurchaseMaterial->qty) * $onDatePurchaseMaterial->operation_value;
-        //             }
+        // if($date == '2021-09-24'){
+        //     dd([
+        //         'total_material_purchased_cost' => $total_material_purchased_cost,
+        //         'total_purchased_material_qty' => $total_purchased_material_qty,
+        //         'total_purchased_net_cost' => $total_purchased_net_cost,
 
-        //         }
-        //         if ($onDatePurchaseMaterial->operator == '*') {
-        //             $onDate_purchased_qty = $onDatePurchaseMaterial->received * $onDatePurchaseMaterial->operation_value;
-        //         } else {
-        //             $onDate_purchased_qty = $onDatePurchaseMaterial->received / $onDatePurchaseMaterial->operation_value;
-        //         }
-        //         $total_on_date_purchased_cost = $onDate_material_purchased_cost;
-        //         $total_on_date_purchased_qty = $onDate_purchased_qty;
-        //         $total_on_date_purchased_value = $onDate_purchased_qty * $onDate_material_purchased_cost;
-            
+        //         'total_production_material_cost' => $total_production_material_cost,
+        //         'total_production_material_qty' => $total_production_material_qty,
+        //         'total_production_material_value' => $total_production_material_value,
+
+        //         'total_returned_material_qty' => $total_returned_material_qty,
+        //         'after_return_cost' => $after_return_cost,
+
+        //         'total_damage_material_qty' => $total_damage_material_qty,
+
+        //     ]);
         // }
-        // if($date == '2021-09-01')
-        // {
-        //     $total_qty = (($total_purchased_material_qty + $opening_stock_qty) - ($total_production_material_qty + $total_returned_material_qty + $total_damage_material_qty));
-            
-        //     // $material_cost = ($total_qty > 0) ? 
-        //     // (((($total_material_purchased_cost / $total_purchased_material_qty) * $old_quantity) + $total_on_date_purchased_value) 
-        //     // / $total_qty): 0;
-        //     $material_cost = 0;
-        //     echo "last date = ".date('Y-m-d',strtotime('-2 day',strtotime($date)))." purchased qty = $total_purchased_material_qty <br> On date ".date('Y-m-d',strtotime('-1 day',strtotime($date)))." purchased qty =  $total_on_date_purchased_qty <br>";
-        //     echo "2021-09-01 <br> =========== <br> old qunatity = $total_qty <br> material cost = $total_purchased_net_cost <br><br>";
-        // }
-        // if($date == '2021-09-02')
-        // {
-        //      $total_qty = (($total_purchased_material_qty + $opening_stock_qty) - ($total_production_material_qty + $total_returned_material_qty + $total_damage_material_qty));
-        //     // $material_cost = ($total_qty > 0) ? 
-        //     // (((($total_material_purchased_cost / $total_purchased_material_qty) * $total_qty) + $total_on_date_purchased_value) 
-        //     // / $total_qty): 0;
-        //     $material_cost = 0;
-        //     echo "last date = ".date('Y-m-d',strtotime('-2 day',strtotime($date)))." purchased qty = $total_purchased_material_qty <br> On date ".date('Y-m-d',strtotime('-1 day',strtotime($date)))." purchased qty =  $total_on_date_purchased_qty <br>";
-        //     echo "2021-09-02 <br> =========== <br> old qunatity = $total_qty <br> material cost = $total_purchased_net_cost <br><br>";
-        // }
-        // if($date == '2021-09-03')
-        // {
-        //      $total_qty = (($total_purchased_material_qty + $opening_stock_qty) - ($total_production_material_qty + $total_returned_material_qty + $total_damage_material_qty));
-        //     // $material_cost = ($total_qty > 0) ? 
-        //     // (((($total_material_purchased_cost / $total_purchased_material_qty) * $total_qty) + $total_on_date_purchased_value) 
-        //     // / $total_qty): 0;
-        //     $material_cost = 0;
-        //     echo "last date = ".date('Y-m-d',strtotime('-2 day',strtotime($date)))." purchased qty = $total_purchased_material_qty <br> On date ".date('Y-m-d',strtotime('-1 day',strtotime($date)))." purchased qty =  $total_on_date_purchased_qty <br>";
-        //     echo "2021-09-03 <br> =========== <br> old qunatity = $total_qty <br> material cost = $total_purchased_net_cost <br><br>";
-        //     dd('ok');
-        // }
+
         
         if($opening_date == $date){
             $material_cost = $opening_cost;
@@ -325,11 +280,13 @@ class MaterialStockLedgerController extends BaseController
             $material_cost = 0;
             $total_qty     = 0; 
         }
+
+    
         
         $material_data = [
-            'cost' => number_format($after_return_cost > 0 ? $after_return_cost : $material_cost, 4, '.', ''),
+            'cost' => $material_cost > 0 ? number_format($material_cost,2,'.','') : number_format($after_return_cost,2,'.',''),
             'qty' => $total_qty,
-            'value' => number_format((($after_return_cost > 0 ? number_format($after_return_cost,4,'.','') : number_format($material_cost,4,'.','')) * $total_qty), 4, '.', ''),
+            'value' => ($material_cost > 0 ? number_format($material_cost,2,'.','') : number_format($after_return_cost,2,'.','')) * $total_qty,
         ];
         return $material_data;
     }

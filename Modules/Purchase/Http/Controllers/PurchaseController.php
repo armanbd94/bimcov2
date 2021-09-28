@@ -206,7 +206,7 @@ class PurchaseController extends BaseController
                             $current_stock_value = ($material_data->qty ? $material_data->qty : 0) * ($material_data->cost ? $material_data->cost : 0);
                             $cost = ($value['subtotal'] + $current_stock_value) / ($qty + $material_data->qty);
                             $old_cost = $material_data->cost ? $material_data->cost : 0;
-
+                            
                             $material_data->qty += $qty;
                             $material_data->cost    = number_format($cost,4,'.','');
                             $material_data->old_cost = number_format($old_cost,4,'.','');
