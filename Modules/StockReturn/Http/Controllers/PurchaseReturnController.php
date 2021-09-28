@@ -219,7 +219,9 @@ class PurchaseReturnController extends BaseController
                                     'after_return_unit_cost'    => $after_return_material_cost,
                                     'deduction_rate'            => $value['deduction_rate'] ? $value['deduction_rate'] : null,
                                     'deduction_amount'          => $value['deduction_amount'] ? $value['deduction_amount'] : null,
-                                    'total'                     => $value['total']
+                                    'total'                     => $value['total'],
+                                    'created_at'                => date('Y-m-d H:i:s'),
+                                    'updated_at'                => date('Y-m-d H:i:s'),
                                 ];
 
                                 

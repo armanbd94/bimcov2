@@ -1,7 +1,7 @@
 @if ($ledger_data)
 @foreach ($ledger_data as $value)
     <tr>
-        <td class="text-center">{{ date('j-m-y',strtotime($value['date'])) }}</td>
+        <td class="text-center">{{ date('d-M-y',strtotime($value['date'])) }}</td>
         <td>{{ $value['material_name'] }}</td>
         <td class="text-center">{{ $value['unit_name'] }}</td>
         
@@ -80,17 +80,17 @@
     <td colspan="7"  class="text-right font-weight-bolder">Total</td>
     <td class="text-right font-weight-bolder">{{ $total_purchase_qty }}</td>
     <td></td>
-    <td class="text-right font-weight-bolder">{{ number_format($total_purchase_value,4, '.', ',') }}</td>
+    <td class="text-right font-weight-bolder">{{ $total_purchase_value }}</td>
     <td></td>
     <td></td>
     <td></td>
     <td class="text-right font-weight-bolder">{{ $total_production_qty }}</td>
     <td></td>
     <td></td>
-    <td class="text-right font-weight-bolder">{{ number_format($total_production_value,4, '.', ',') }}</td>
+    <td class="text-right font-weight-bolder">{{ $total_production_value }}</td>
     <td class="text-right font-weight-bolder">{{ $total_current_qty }}</td>
     <td></td>
-    <td class="text-right font-weight-bolder">{{ number_format($total_current_value,4, '.', ',') }}</td>
+    <td class="text-right font-weight-bolder">{{ $total_current_value }}</td>
 </tr>
 @else   
 <tr>

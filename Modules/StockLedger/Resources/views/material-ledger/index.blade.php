@@ -5,6 +5,9 @@
 @push('styles')
 <link href="css/daterangepicker.min.css" rel="stylesheet" type="text/css" />
 <style>
+    table#dataTable{
+        width:2200px !important;
+    }
     #dataTable ul li{
         border-bottom: 1px solid #EBEDF3;
         margin-bottom: 5px;

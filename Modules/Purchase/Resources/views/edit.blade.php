@@ -163,7 +163,7 @@
                                                     <td><input type="text" class="net_unit_cost form-control text-right" name="materials[{{ $key+1 }}][net_unit_cost]" value="{{ $purchase_material->pivot->net_unit_cost }}"></td>
                                                     <td class="discount text-right d-none">{{ number_format((float)$purchase_material->pivot->discount, 2, '.','') }}</td>
                                                     <td class="tax text-right d-none">{{ number_format((float)$purchase_material->pivot->tax, 2, '.','') }}</td>
-                                                    <td class="sub-total text-right">{{ number_format((float)$purchase_material->pivot->total, 2, '.','') }}</td>
+                                                    <td class="sub-total text-right">{{ (float)$purchase_material->pivot->total }}</td>
                                                     <td class="text-center"><button type="button" class="edit-material btn btn-sm btn-primary mr-2 small-btn" data-toggle="modal"
                                                         data-target="#editModal"><i class="fas fa-edit"></i></button>
                                                         <button type="button" class="btn btn-danger btn-sm remove-material small-btn"><i class="fas fa-trash"></i></button></td>
@@ -695,12 +695,12 @@ $(document).ready(function () {
 
         // $('#material_table tbody tr:nth-child('+(rowindex + 1)+')').find('td:nth-child(6)').text(net_unit_cost.toFixed(2));
         if(input == 2){
-        $('#material_table tbody tr:nth-child('+(rowindex + 1)+')').find('.net_unit_cost').val(net_unit_cost.toFixed(2));
+        $('#material_table tbody tr:nth-child('+(rowindex + 1)+')').find('.net_unit_cost').val(net_unit_cost);
         }
         $('#material_table tbody tr:nth-child('+(rowindex + 1)+')').find('td:nth-child(8)').text(tax.toFixed(2));
         $('#material_table tbody tr:nth-child('+(rowindex + 1)+')').find('.tax-value').val(tax.toFixed(2));
-        $('#material_table tbody tr:nth-child('+(rowindex + 1)+')').find('td:nth-child(9)').text(sub_total.toFixed(2));
-        $('#material_table tbody tr:nth-child('+(rowindex + 1)+')').find('.subtotal-value').val(sub_total.toFixed(2));
+        $('#material_table tbody tr:nth-child('+(rowindex + 1)+')').find('td:nth-child(9)').text(sub_total);
+        $('#material_table tbody tr:nth-child('+(rowindex + 1)+')').find('.subtotal-value').val(sub_total);
 
         calculateTotal();
     }

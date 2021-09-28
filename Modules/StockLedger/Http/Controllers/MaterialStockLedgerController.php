@@ -76,7 +76,7 @@ class MaterialStockLedgerController extends BaseController
                     //     dd($current_cost);
                     // }
                     // $current_cost = $previous_data['cost'];
-                    $current_value = $current_qty * number_format($current_cost,4,'.','');
+                    $current_value = $current_qty * $current_cost;
 
                     $total_purchase_qty += $purchase_data['qty'];
                     $total_purchase_value += $purchase_data['value'];
@@ -96,19 +96,19 @@ class MaterialStockLedgerController extends BaseController
                         'previous_value'   => $previous_data['value'],
                         'purchase_cost'    => $purchase_data['cost'],
                         'purchase_qty'     => $purchase_data['qty'],
-                        'purchase_value'   => number_format($purchase_data['value'],4,'.',''),
-                        'purchase_numbers'   => $purchase_data['purchase_numbers'],
+                        'purchase_value'   => $purchase_data['value'],
+                        'purchase_numbers' => $purchase_data['purchase_numbers'],
 
-                        'production_cost'  => $production_data['cost'],
-                        'production_qty'   => $production_data['qty'],
-                        'production_subtotal'   => $production_data['subtotal'],
-                        'production_value' => $production_data['value'],
-                        'batch_numbers' => $production_data['batch_numbers'],
-                        'return_numbers' => $production_data['return_numbers'],
-                        'damage_numbers' => $production_data['damage_numbers'],
-                        'current_cost'     => number_format($current_cost,4,'.',''),
-                        'current_qty'      => $current_qty,
-                        'current_value'    => number_format($current_value,4,'.',''),
+                        'production_cost'     => $production_data['cost'],
+                        'production_qty'      => $production_data['qty'],
+                        'production_subtotal' => $production_data['subtotal'],
+                        'production_value'    => $production_data['value'],
+                        'batch_numbers'       => $production_data['batch_numbers'],
+                        'return_numbers'      => $production_data['return_numbers'],
+                        'damage_numbers'      => $production_data['damage_numbers'],
+                        'current_cost'        => $current_cost,
+                        'current_qty'         => $current_qty,
+                        'current_value'       => $current_value,
                     ];
                     
                     
@@ -162,6 +162,7 @@ class MaterialStockLedgerController extends BaseController
             ->get();
             
         $total_material_purchased_cost = $total_purchased_net_cost = $total_purchased_material_qty = 0;
+        $after_purchase_datetime = '';
         if (!$purchaseMaterial->isEmpty()) {
             foreach ($purchaseMaterial as $material) {
                 if ($material->tax_method == 1) {
@@ -187,6 +188,7 @@ class MaterialStockLedgerController extends BaseController
                 $total_material_purchased_cost += ($material_old_cost * $old_qty);
                 $total_purchased_material_qty += $old_qty;
                 $total_purchased_net_cost = $material->new_unit_cost ? $material->new_unit_cost : $material->net_unit_cost;
+                $after_purchase_datetime = $material->created_at;
             }
         }
         
@@ -221,8 +223,9 @@ class MaterialStockLedgerController extends BaseController
             ->where('pm.material_id', $id)
             ->whereDate('p.return_date', '<',$date)
             ->get();
-        $after_return_cost = 0;
-        $total_returned_material_qty = 0;
+        
+        $total_returned_material_qty = $after_return_cost = 0;
+        $after_return_datetime = '';
         if (!$purchaseReturnMaterial->isEmpty()) {
             foreach ($purchaseReturnMaterial as $material) {
                 if ($material->operator == '*') {
@@ -232,8 +235,12 @@ class MaterialStockLedgerController extends BaseController
                 }
                 $total_returned_material_qty += $return_qty;
                 $after_return_cost = $material->after_return_unit_cost;
+                $after_return_datetime = $material->created_at;
             }
         }
+
+        
+
 
         //Material Damage List
         $total_damage_material_qty = 0;
@@ -247,7 +254,7 @@ class MaterialStockLedgerController extends BaseController
             }
         }
 
-        // if($date == '2021-09-24'){
+        // if($date == '2021-09-04'){
         //     dd([
         //         'total_material_purchased_cost' => $total_material_purchased_cost,
         //         'total_purchased_material_qty' => $total_purchased_material_qty,
@@ -261,6 +268,8 @@ class MaterialStockLedgerController extends BaseController
         //         'after_return_cost' => $after_return_cost,
 
         //         'total_damage_material_qty' => $total_damage_material_qty,
+        //         'after_purchase_datetime' => $after_purchase_datetime,
+        //         'after_return_datetime' => $after_return_datetime,
 
         //     ]);
         // }
@@ -280,13 +289,24 @@ class MaterialStockLedgerController extends BaseController
             $material_cost = 0;
             $total_qty     = 0; 
         }
-
+        $cost = 0;
+        if(!empty($after_return_datetime) && !empty($after_purchase_datetime))
+        {
+            if($after_return_datetime > $after_purchase_datetime)
+            {
+                $cost = $after_return_cost;
+            }else{
+                $cost = $material_cost;
+            }
+        }else{
+            $cost = $material_cost;
+        }
     
         
         $material_data = [
-            'cost' => $material_cost > 0 ? number_format($material_cost,2,'.','') : number_format($after_return_cost,2,'.',''),
+            'cost' => $cost,
             'qty' => $total_qty,
-            'value' => ($material_cost > 0 ? number_format($material_cost,2,'.','') : number_format($after_return_cost,2,'.','')) * $total_qty,
+            'value' => $cost * $total_qty,
         ];
         return $material_data;
     }
@@ -336,7 +356,7 @@ class MaterialStockLedgerController extends BaseController
         $per_unit_cost = ($total_purchased_qty > 0) ? ($total_purchased_cost / $total_purchased_qty) : 0;
         $purchase_numbers = !empty($purchase_number_list) ? array_unique($purchase_number_list) : '';
         $material_data = [
-            'cost' => number_format($per_unit_cost, 4, '.', ''),
+            'cost' => $per_unit_cost,
             'qty' => $total_purchased_qty,
             'value' => $per_unit_cost * $total_purchased_qty,
             'purchase_numbers' => $purchase_numbers,
@@ -419,9 +439,9 @@ class MaterialStockLedgerController extends BaseController
 
         $material_data = [
             'cost' => [
-                'production_material_cost'     => number_format($total_production_material_cost, 4, '.', ''),
-                'returned_material_cost' => number_format($total_returned_material_cost, 4, '.', ''),
-                'damage_material_cost'         => number_format($total_damage_material_cost, 4, '.', ''),
+                'production_material_cost'     => $total_production_material_cost,
+                'returned_material_cost' => $total_returned_material_cost,
+                'damage_material_cost'         => $total_damage_material_cost,
             ],
             
             'qty' => [
@@ -430,12 +450,12 @@ class MaterialStockLedgerController extends BaseController
                 'damage_material_qty'         => $total_damage_material_qty,
             ],
             'subtotal' => [
-                'production_material_cost'     => number_format(($total_production_material_cost * $total_production_material_qty), 4, '.', ''),
-                'returned_material_cost'       => number_format(($total_returned_material_cost * $total_returned_material_qty), 4, '.', ''),
-                'damage_material_cost'         => number_format(($total_damage_material_cost * $total_damage_material_qty), 4, '.', ''),
+                'production_material_cost'     => ($total_production_material_cost * $total_production_material_qty),
+                'returned_material_cost'       => ($total_returned_material_cost * $total_returned_material_qty),
+                'damage_material_cost'         => ($total_damage_material_cost * $total_damage_material_qty),
             ],
             'total_qty' => $total_production_material_qty + $total_returned_material_qty + $total_damage_material_qty,
-            'value' => number_format(($total_production_material_value+$total_returned_material_value+$total_damage_material_value), 4, '.', ''),
+            'value' => ($total_production_material_value+$total_returned_material_value+$total_damage_material_value),
             'batch_numbers' => $batch_numbers,
             'return_numbers' => $return_numbers,
             'damage_numbers' => $damage_numbers,
