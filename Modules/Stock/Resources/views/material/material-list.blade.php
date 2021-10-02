@@ -16,9 +16,13 @@
                         <th class="text-center">Material Code</th>
                         <th>Material Name</th>
                         <th class="text-center">Stock Unit</th>
+                        @if(permission('material-stock-cost-view'))
                         <th class="text-right">Per Unit Cost</th>
+                        @endif
                         <th class="text-center">Stock Qty</th>
+                        @if(permission('material-stock-cost-view'))
                         <th class="text-right">Stock Value</th>
+                        @endif
                     </tr>
                 </thead>
                 <tbody>
@@ -31,9 +35,13 @@
                                 <td class="text-center">{{ $item->material_id }}</td>
                                 <td>{{ $item->material->material_name }}</td>
                                 <td class="text-center">{{ $item->material->unit->unit_name }}</td>
+                                @if(permission('material-stock-cost-view'))
                                 <td class="text-right">{{ number_format($item->material->cost,4,'.','') }}</td>
+                                @endif
                                 <td class="text-center">{{ $item->qty }}</td>
+                                @if(permission('material-stock-cost-view'))
                                 <td class="text-right">{{ number_format(($item->qty * $item->material->cost),4,'.','') }}</td>
+                                @endif
                                 @php
                                     $total += ($item->qty * $item->material->cost);
                                 @endphp
@@ -48,9 +56,13 @@
                         <td class="text-center">{{ $item->material_id }}</td>
                         <td>{{ $item->material->material_name }}</td>
                         <td class="text-center">{{ $item->material->unit->unit_name }}</td>
+                        @if(permission('material-stock-cost-view'))
                         <td class="text-right">{{ number_format($item->material->cost,4,'.','') }}</td>
+                        @endif
                         <td class="text-center">{{ $item->qty }}</td>
+                        @if(permission('material-stock-cost-view'))
                         <td class="text-right">{{ number_format(($item->qty * $item->material->cost),4,'.','') }}</td>
+                        @endif
                         @php
                             $total += ($item->qty * $item->material->cost);
                         @endphp
@@ -59,6 +71,7 @@
                 @endforeach
                     @endif
                 </tbody>
+                @if(permission('material-stock-cost-view'))
                 <tfoot>
                     <tr class="bg-primary">
                         <th></th>
@@ -66,11 +79,15 @@
                         <th></th>
                         <th></th>
                         <th></th>
+                        
                         <th style="text-align: right !important;font-weight:bold;color:white;">Total</th>
                         <th style="text-align: right !important;font-weight:bold;color:white;">{{ number_format($total,4,'.','') }}</th>
-                        @php $total_stock_value += $total; @endphp
+                        
+                        
                     </tr>
                 </tfoot>
+                @endif
+                @php $total_stock_value += $total; @endphp
             </table>
             
             @php
@@ -78,7 +95,9 @@
             @endphp
         @endif
     @endforeach
+    @if(permission('material-stock-cost-view'))
     <h3 class="bg-dark text-white font-weight-bolder p-3 text-right">Grand Total = {{ number_format($grand_total,4,'.','') }}</h3>
+    @endif
 @else 
     <div class="col-md-12 text-center"><h3 class="py-3 bg-danger text-white">Stock Data is Empty</h3></div>
 @endif 
