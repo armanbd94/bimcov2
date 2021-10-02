@@ -67,7 +67,7 @@
                                         <th class="text-center">Unit</th>
                                         
                                         <th class="text-right">Prev. Qty</th>
-                                        @if(Auth::user()->role_id == 1 || Auth::user()->role_id == 2)
+                                        @if(permission('finish-goods-stock-price-view'))
                                         <th class="text-right">Prev. Rate</th>
                                         <th class="text-right">Prev. Value</th>
                                         @endif
@@ -75,20 +75,20 @@
                                         <th class="text-center">Batch No.</th>
                                         <th class="text-center">SRINV No.</th>
                                         <th class="text-right">Stock In Qty</th>
-                                        @if(Auth::user()->role_id == 1 || Auth::user()->role_id == 2)
+                                        @if(permission('finish-goods-stock-price-view'))
                                         <th class="text-right">Stock In Rate</th>
                                         <th class="text-right">Stock In Value</th>
                                         @endif
 
                                         <th class="text-center">Invoice No.</th>
                                         <th class="text-right">Stock Out Qty</th>
-                                        @if(Auth::user()->role_id == 1 || Auth::user()->role_id == 2)
+                                        @if(permission('finish-goods-stock-price-view'))
                                         <th class="text-right">Stock Out Rate</th>
                                         <th class="text-right">Stock Out Value</th>
                                         @endif
                                        
                                         <th class="text-right">Curr. Qty</th>
-                                        @if(Auth::user()->role_id == 1 || Auth::user()->role_id == 2)
+                                        @if(permission('finish-goods-stock-price-view'))
                                         <th class="text-right">Curr. Rate</th>
                                         <th class="text-right">Curr. Value</th>
                                         @endif

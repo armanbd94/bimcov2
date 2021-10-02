@@ -88,14 +88,14 @@
                                         
                                         
                                         <th class="text-right">Prev. Qty</th>
-                                        @if(Auth::user()->role_id == 1 || Auth::user()->role_id == 2)
+                                        @if(permission('material-stock-ledger-cost-view'))
                                         <th class="text-right">Prev. Rate</th>
                                         <th class="text-right">Prev. Value</th>
                                         @endif
                                         
                                         <th class="text-center">Purchase No.</th>
                                         <th class="text-right">Stock In Qty</th>
-                                        @if(Auth::user()->role_id == 1 || Auth::user()->role_id == 2)
+                                        @if(permission('material-stock-ledger-cost-view'))
                                         <th class="text-right">Stock In Rate</th>
                                         <th class="text-right">Stock In Value</th>
                                         @endif
@@ -104,14 +104,14 @@
                                         <th class="text-center">Return No.</th>
                                         <th class="text-center">Damage No.</th>
                                         <th class="text-right">Stock Out Qty</th>
-                                        @if(Auth::user()->role_id == 1 || Auth::user()->role_id == 2)
+                                        @if(permission('material-stock-ledger-cost-view'))
                                         <th class="text-right">Stock Out Rate</th>
                                         <th class="text-right">Stock Out Subtotal</th>
                                         <th class="text-right">Stock Out Value</th>
                                         @endif
                                        
                                         <th class="text-right">Current Qty</th>
-                                        @if(Auth::user()->role_id == 1 || Auth::user()->role_id == 2)
+                                        @if(permission('material-stock-ledger-cost-view'))
                                         <th class="text-right">Current Rate</th>
                                         <th class="text-right">Current Value</th>
                                         @endif
