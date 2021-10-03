@@ -180,7 +180,7 @@ class SupplierController extends BaseController
                 'voucher_no'          => $transaction_id,
                 'voucher_type'        => 'PR Balance',
                 'voucher_date'        => date("Y-m-d"),
-                'description'         => 'Supplier debit For '.$supplier_name,
+                'description'         => 'Supplier credit For previous balance '.$supplier_name,
                 'debit'               => 0,
                 'credit'              => $balance,
                 'posted'              => 1,
